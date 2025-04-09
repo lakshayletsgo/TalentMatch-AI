@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Job Descriptions - Job Screening System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Job Descriptions</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm btn-outline-primary me-2">
+            <i class="fas fa-plus"></i> Add New Job
+        </button>
+        <form action="/run-agent/job_processor" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-sync"></i> Process Jobs
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">All Job Descriptions</h5>
+    </div>
+    <div class="card-body">
+        {% if jobs %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Descriptions</th>
+                        <th>Date Added</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                    <tr>
+                        <td>{{ job.id }}</td>
+                        <td>{{ job.title }}</td>
+                        <td>{{ job.summary.split('Description:')[1] }}</td>
+                        <td>{{ job.date_added }}</td>
+                        <td>
+                            <span class="badge {% if job.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ job.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No job descriptions found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

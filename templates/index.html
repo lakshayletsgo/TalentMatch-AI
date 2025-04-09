@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Job Screening System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Job Descriptions</h6>
+                        <p class="stat-value mb-0">{{ job_count }}</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                </div>
+                <p class="stat-label mb-0">Total job postings</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Parsed Resumes</h6>
+                        <p class="stat-value mb-0">{{ resume_count }}</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
+                <p class="stat-label mb-0">Candidates in database</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Shortlisted</h6>
+                        <p class="stat-value mb-0">{{ shortlisted_count }}</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-square"></i>
+                    </div>
+                </div>
+                <p class="stat-label mb-0">Qualified matches</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-0">Interviews</h6>
+                        <p class="stat-value mb-0">{{ interview_count }}</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                </div>
+                <p class="stat-label mb-0">Scheduled interviews</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Job Descriptions -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Job Descriptions</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_jobs %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Department</th>
+                                <th>Date Added</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in recent_jobs %}
+                            <tr>
+                                <td>{{ job.id }}</td>
+                                <td>{{ job.title }}</td>
+                                <td>{{ (job.summary.split('Description:')[1]).split()[:20]|join(' ') }}</td>
+                                <td>{{ job.date_added }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="/jobs" class="btn btn-sm btn-outline-primary">View All Jobs</a>
+                {% else %}
+                <p class="text-muted">No job descriptions found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Interviews -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Upcoming Interviews</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_interviews %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Job</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for interview in upcoming_interviews %}
+                            <tr>
+                                <td>{{ interview.candidate_name }}</td>
+                                <td>{{ interview.job_title }}</td>
+                                
+                        <td>{{ interview.scheduled_date.split(' ')[0] }}</td>
+                        <td>{{ interview.scheduled_date.split(' ')[1] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="/interviews" class="btn btn-sm btn-outline-primary">View All Interviews</a>
+                {% else %}
+                <p class="text-muted">No upcoming interviews found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Access</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <a href="/jobs" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-briefcase fa-2x mb-2"></i>
+                            <span>Job Descriptions</span>
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="/candidates" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <span>Candidates</span>
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="/matching" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                            <span>Matching Scores</span>
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="/shortlisted" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-check-square fa-2x mb-2"></i>
+                            <span>Shortlisted</span>
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="/interviews" class="btn btn-outline-danger w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-calendar fa-2x mb-2"></i>
+                            <span>Interviews</span>
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <form action="/run-all-agents" method="post">
+                            <button type="submit" class="btn btn-outline-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-play-circle fa-2x mb-2"></i>
+                                <span>Run All Agents</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

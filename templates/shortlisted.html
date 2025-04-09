@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Shortlisted Candidates - Job Screening System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Shortlisted Candidates</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <form action="/run-agent/shortlister" method="post">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-sync"></i> Run Shortlisting
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Filter Shortlisted Candidates</h5>
+    </div>
+    <div class="card-body">
+        <form action="/shortlisted" method="get">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <select class="form-select" name="job_id">
+                        <option value="">All Jobs</option>
+                        <!-- You would populate this from your database -->
+                        <option value="1">Senior Software Engineer</option>
+                        <option value="2">Product Manager</option>
+                        <option value="3">UX Designer</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="status">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Shortlisted Candidates</h5>
+    </div>
+    <div class="card-body">
+        {% if shortlisted %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Candidate</th>
+                        <th>Score</th>
+                        <th>Rank</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in shortlisted %}
+                    <tr>
+                        <td>{{ candidate.id }}</td>
+                        <td>{{ candidate.job_title }}</td>
+                        <td>{{ candidate.candidate_name }}</td>
+                        <td>{{ candidate.score }}%</td>
+                        <td>#{{ candidate.rank }}</td>
+                        <td>
+                            <span class="badge {% if candidate.status == 'Interviewing' %}bg-success{% elif candidate.status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ candidate.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-calendar"></i> Schedule
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No shortlisted candidates found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

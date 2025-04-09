@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Job Screening System{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .nav-link.active {
+            color: #2470dc;
+        }
+        
+        .nav-link:hover {
+            color: #0d6efd;
+        }
+        
+        .navbar-brand {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            font-size: 1rem;
+            background-color: rgba(0, 0, 0, .25);
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+        }
+        
+        .stat-card {
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        main {
+            margin-top: 20px;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">Job Screening System</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+                                <i class="fas fa-home me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/jobs' %}active{% endif %}" href="/jobs">
+                                <i class="fas fa-briefcase me-2"></i> Job Descriptions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/candidates' %}active{% endif %}" href="/candidates">
+                                <i class="fas fa-users me-2"></i> Candidates
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/matching' %}active{% endif %}" href="/matching">
+                                <i class="fas fa-chart-bar me-2"></i> Matching Scores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/shortlisted' %}active{% endif %}" href="/shortlisted">
+                                <i class="fas fa-check-square me-2"></i> Shortlisted
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/interviews' %}active{% endif %}" href="/interviews">
+                                <i class="fas fa-calendar me-2"></i> Interviews
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Agent Actions</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <form action="/run-all-agents" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play-circle me-2"></i> Run All Agents
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/run-agent/job_processor" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play me-2"></i> Process Job Descriptions
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/run-agent/resume_parser" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play me-2"></i> Parse Resumes
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/run-agent/candidate_matcher" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play me-2"></i> Match Candidates
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/run-agent/shortlister" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play me-2"></i> Shortlist Candidates
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/run-agent/interview_scheduler" method="post">
+                                <button type="submit" class="nav-link text-primary border-0 bg-transparent">
+                                    <i class="fas fa-play me-2"></i> Schedule Interviews
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show mt-3" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
